@@ -1,0 +1,107 @@
+
+class Photon {
+
+  Node location;
+
+  PVector velocity;
+  PVector desired;
+  PVector current;
+  float[][] orientation;
+
+  Photon(Node startNode, PVector vel) {
+    location = startNode;
+    velocity = vel;
+    desired = new PVector(0, 0);
+    current = new PVector(0, 0);
+    orientation = new float[][]{{1, 0}, {0, 1}}; // start by facing "forward", "forward" being for the start node
+  }
+
+  void move() {
+    desired.add(velocity);
+
+
+    Edge outEdge = null;
+    PVector outVector = null;
+    PVector bestNextPos = current;
+
+    for (int i = 0; i < location.edges.length; i++) {
+      // apply orientation transformation
+      PVector rotatedEdge = multVector(orientation, location.edges[i].connection);
+      PVector nextPos = PVector.add(current, rotatedEdge);
+      if (PVector.dist(nextPos, desired) < PVector.dist(bestNextPos, desired)) {
+        outEdge = location.edges[i];
+        bestNextPos = nextPos;
+        outVector = rotatedEdge;
+      }
+    }
+
+    if (outEdge  != null) {
+      // get angle into next node
+      PVector inVector = null; // every edge should have an inverse edge
+      for (int i = 0; i < outEdge.to.edges.length; i++) {
+        if (outEdge.to.edges[i].to == location) {
+          inVector = outEdge.to.edges[i].connection;
+        }
+      }
+
+
+      // match inEdge to orientation
+      // this is the big kahuna
+      
+      // outEdge is relative to photons frame, going from old node to new node
+      // inEdge is from new nodes frame, going form new node to old node
+      float[][] rotateToOut = intoMatrix(outVector);
+      float[][] rotateAwayIn = outofMatrix(new PVector(-inVector.x, inVector.y));
+      
+      // correct direction, but plane might be flipped
+      orientation = multMatrix(rotateToOut, rotateAwayIn);
+      
+      if (outEdge.flipped) {
+       orientation[0] = new float[]{-orientation[0][0], -orientation[0][1]}; 
+      }
+
+
+      location = outEdge.to;
+      current = bestNextPos;
+    }
+  }
+
+  PVector multVector(float[][] matrix, PVector toRotate) {    
+    PVector multiplied = new PVector(matrix[0][0] * toRotate.x + matrix[0][1] * toRotate.y, matrix[1][0] * toRotate.x + matrix[1][1] * toRotate.y);
+    //multiplied.setMag(toRotate.mag()); // only need this if matrix is non normalized
+    return multiplied;
+  }
+
+  // rotates y coloumn to point into the incoming vector
+  float[][] intoMatrix(PVector rotation) {
+    float[] xCol = {-rotation.y, rotation.x};
+    float[] yCol = {-rotation.x, -rotation.y};
+    float[][] rotated = {xCol, yCol};
+    return rotated;
+  }
+  // rotates y coloumn to point out the incoming vector
+  float[][] outofMatrix(PVector rotation) {
+    float[] xCol = {rotation.y, -rotation.x};
+    float[] yCol = {rotation.x, rotation.y};
+    float[][] rotated = {xCol, yCol};
+    return rotated;
+  }
+
+  float[][] multMatrix(float[][] m1, float[][] m2) {
+    float[] xCol = {m1[0][0]*m2[0][0] + m1[0][1]*m2[1][0], m1[0][0]*m2[0][1] + m1[0][1]*m2[1][1]};
+    float[] yCol = {m1[1][0]*m2[0][0] + m1[1][1]*m2[1][0], m1[1][0]*m2[0][1] + m1[1][1]*m2[1][1]};
+    float[][] multiplied = {xCol, yCol};
+    return multiplied;
+  }
+
+  void display() {
+
+    noStroke();
+    fill(100, 100, 250);
+    // circle(location.displayPos.x, location.displayPos.y, displayDis/2);
+    pushMatrix();
+    translate(location.displayPos.x, location.displayPos.y, location.displayPos.z);
+    sphere(displayDis);
+    popMatrix();
+  }
+}
