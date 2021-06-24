@@ -1,10 +1,12 @@
 class Edge {
   PVector connection;
+  boolean flipped;
   Node to;
   
-  Edge(PVector _connection, Node node) {
+  Edge(PVector _connection, Node node, boolean _flipped) {
     connection = _connection;
     to = node;
+    flipped = _flipped;
   }
 }
 
@@ -24,9 +26,9 @@ class Node {
     edges = new Edge[0];
   }
   
-  void addEdge(PVector connection, Node node) {
+  void addEdge(PVector connection, Node node, boolean flipped) {
     Edge[] newEdges = new Edge[edges.length + 1];
-    newEdges[0] = new Edge(connection, node);
+    newEdges[0] = new Edge(connection, node, flipped);
     for (int i = 0; i < edges.length; i++) {
       newEdges[i + 1] = edges[i];
     }
@@ -48,6 +50,10 @@ class Node {
     stroke(150);
     strokeWeight(1);
     for (int i = 0; i < edges.length; i++) {
+      stroke(200, 200, 200);
+      if (edges[i].flipped) {
+       stroke(10, 20, 150); 
+      }
       // line(displayPos.x, displayPos.y, edges[i].to.displayPos.x, edges[i].to.displayPos.y);
       line(displayPos.x, displayPos.y, displayPos.z, edges[i].to.displayPos.x, edges[i].to.displayPos.y, edges[i].to.displayPos.z);
     }

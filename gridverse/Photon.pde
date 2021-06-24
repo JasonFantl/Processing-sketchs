@@ -5,6 +5,9 @@ class Photon {
   PVector velocity;
   PVector desired;
   PVector current;
+  
+  // make into 2d vector
+  boolean flipped;
   PVector orientation;
   
   Photon(Node startNode, PVector vel) {
@@ -13,6 +16,7 @@ class Photon {
     desired = new PVector(0, 0);
     current = new PVector(0, 0);
     orientation = new PVector(0, 1); // start by facing "forward", "forward" being for the start node
+    flipped = false;
   }
   
   void move() {
@@ -24,7 +28,11 @@ class Photon {
     PVector bestNextPos = current;
     
     for (int i = 0; i < location.edges.length; i++) {
-      PVector rotatedEdge = rotateVector(location.edges[i].connection, orientation);
+      PVector preRotated = location.edges[i].connection;
+      if (flipped) {
+        preRotated = new PVector(-preRotated.x, preRotated.y);
+      }
+      PVector rotatedEdge = rotateVector(preRotated, orientation);
       PVector nextPos = PVector.add(current, rotatedEdge);
       if (PVector.dist(nextPos, desired) < PVector.dist(bestNextPos, desired)) {
         outEdge = location.edges[i];
@@ -41,10 +49,15 @@ class Photon {
           inVector = outEdge.to.edges[i].connection;
         }
       }
+      if (flipped) {
+        inVector = new PVector(-inVector.x, inVector.y);
+      }
       
       // match inEdge to orientation
       orientation = rotateVector(PVector.mult(outVector, -1), new PVector( -inVector.x, inVector.y));
-      
+      if (outEdge.flipped) {
+        flipped = !flipped;
+      }
       
       location = outEdge.to;
       current = bestNextPos;

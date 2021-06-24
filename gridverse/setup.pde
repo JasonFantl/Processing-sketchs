@@ -11,10 +11,10 @@ void setupEuclidianTorus() {
     for (int j = 0; j < nodes[i].length; j++) {
       float angle = 0;
       //angle = int(random(4)) * PI / 2;
-      nodes[i][j].addEdge(PVector.fromAngle(angle), nodes[mod(i + 1, nodes.length)][j]);
-      nodes[i][j].addEdge(PVector.fromAngle(angle + PI), nodes[mod(i - 1, nodes.length)][j]);
-      nodes[i][j].addEdge(PVector.fromAngle(angle + PI / 2), nodes[i][mod(j + 1, nodes[i].length)]);
-      nodes[i][j].addEdge(PVector.fromAngle(angle - PI / 2), nodes[i][mod(j - 1, nodes[i].length)]);
+      nodes[i][j].addEdge(PVector.fromAngle(angle), nodes[mod(i + 1, nodes.length)][j], false);
+      nodes[i][j].addEdge(PVector.fromAngle(angle + PI), nodes[mod(i - 1, nodes.length)][j], false);
+      nodes[i][j].addEdge(PVector.fromAngle(angle + PI / 2), nodes[i][mod(j + 1, nodes[i].length)], false);
+      nodes[i][j].addEdge(PVector.fromAngle(angle - PI / 2), nodes[i][mod(j - 1, nodes[i].length)], false);
     }
   }
 }
@@ -96,7 +96,7 @@ void setupRandom() {
           inRadius |= PVector.dist(nodes[i][j].displayPos, pmod(nodes[k][l].displayPos, width, height)) < radius;
           if ((i != k || j != l) && inRadius) {
             PVector delta = PVector.sub(nodes[i][j].displayPos, nodes[k][l].displayPos);
-            nodes[i][j].addEdge(delta, nodes[k][l]);
+            nodes[i][j].addEdge(delta, nodes[k][l], false);
           }
         }
       }
