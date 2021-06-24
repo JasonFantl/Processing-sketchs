@@ -42,7 +42,6 @@ class Photon {
         }
       }
       
-      
       // match inEdge to orientation
       orientation = rotateVector(PVector.mult(outVector, -1), new PVector( -inVector.x, inVector.y));
       

@@ -5,8 +5,7 @@ void generateEdgesFor3DEmbedding(float radius) {
 
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      
-      
+
       // get all nodes nearby
       ArrayList<Node> nearNodes = new ArrayList<Node>();
 
@@ -25,30 +24,19 @@ void generateEdgesFor3DEmbedding(float radius) {
       // https://math.stackexchange.com/questions/3763054/projecting-3d-points-onto-2d-coordinate-system-of-a-plane
       // https://stackoverflow.com/questions/9605556/how-to-project-a-point-onto-a-plane-in-3d
       // first find basis vectors of plane
-      
-      // for first basis vector, get random and cross product it with our normal
-      PVector random = PVector.random3D();
-      while (plane[1].cross(random).mag() == 0) {
-        random = PVector.random3D();
-      }
-      
-      // mobius strip showcases issue, at some point the plane must flip its 'z' axis.
-      // do we need a rotation for each edge as well?
-      PVector basisx = plane[1].cross(random).normalize(); // how to stay consistnt?
-      PVector basisy = plane[1].cross(basisx).normalize();
 
       for (Node node : nearNodes) {
         // project onto 3d plane
         PVector delta = PVector.sub(node.displayPos, plane[0]);
         float dist = PVector.dot(delta, plane[1]);
-        PVector rp = PVector.sub(delta, PVector.mult(plane[1],dist));
-        
+        PVector rp = PVector.sub(delta, PVector.mult(plane[1], dist));
+
         // left multiply rp by projection matrix to get 2d vector
         // M =  [  bx.x  bx.y  bx.z ]
         //      [  by.x  by.y  by.z ]
 
-        PVector projVec = new PVector(PVector.dot(basisx, rp), PVector.dot(basisy, rp));
-        nodes[i][j].addEdge(projVec.normalize(),node);
+        PVector projVec = new PVector(PVector.dot(plane[2], rp), PVector.dot(plane[3], rp));
+        nodes[i][j].addEdge(projVec.normalize(), node);
       }
     }
   }
@@ -56,10 +44,12 @@ void generateEdgesFor3DEmbedding(float radius) {
 
 // [0] = origin of the plane, [1] = normal of the plane
 PVector[] bestFitPlane(Node center, ArrayList<Node> nodes) {
-  PVector[] plane = new PVector[2];
+  PVector[] plane = new PVector[4];
   PVector centroid = center.displayPos;
   plane[0] = centroid;
-  plane[1] = new PVector(0, 1);
+  plane[1] = new PVector(1, 0, 0);
+  plane[2] = new PVector(0, 1, 0);
+  plane[2] = new PVector(0, 0, 1);
 
   if (nodes.size() == 0) {
     return plane;
@@ -106,6 +96,11 @@ PVector[] bestFitPlane(Node center, ArrayList<Node> nodes) {
   }
 
   plane[1] = dir.normalize();
-
+  plane[2] = plane[1].cross(new PVector(1, 0, 0)).normalize(); // how to stay consistnt?
+  if (plane[2].mag() < 0.5) { // in case of floating point errors
+    plane[2] = plane[1].cross(new PVector(0, 1, 0)).normalize();
+  }
+  plane[3] = plane[1].cross(plane[2]).normalize();
+  
   return plane;
 }

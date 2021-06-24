@@ -3,14 +3,14 @@ void setupEuclidianTorus() {
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node(i * displayDis, j * displayDis);
+      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis);
     }
   }
   // then add edges
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
       float angle = 0;
-      angle = int(random(4)) * PI / 2;
+      //angle = int(random(4)) * PI / 2;
       nodes[i][j].addEdge(PVector.fromAngle(angle), nodes[mod(i + 1, nodes.length)][j]);
       nodes[i][j].addEdge(PVector.fromAngle(angle + PI), nodes[mod(i - 1, nodes.length)][j]);
       nodes[i][j].addEdge(PVector.fromAngle(angle + PI / 2), nodes[i][mod(j + 1, nodes[i].length)]);
