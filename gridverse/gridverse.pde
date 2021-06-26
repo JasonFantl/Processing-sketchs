@@ -10,17 +10,17 @@ void setup() {
   size(600, 600, P3D);
   cam = new PeasyCam(this, 400);
   
-  nodes = new Node[20][20];
+  nodes = new Node[15][15];
   
   // nodes should be approximatly 1 distance apart
    //setupEuclidianTorus();
-  // setupRandom();
-  //setupSphere();
+   //setupRandom();
+  setupSphere();
   //setup3DGrid();
-  setupCylinder();
+  //setupCylinder();
   
-  PVector velocity = new PVector(0.1, -0.2);
-  photon = new Photon(nodes[0][nodes[0].length/2], velocity);
+  PVector velocity = new PVector(-0.1, 0.2);
+  photon = new Photon(nodes[0][0], velocity);
 }
 
 int mod(int a, int b) {

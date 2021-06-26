@@ -79,7 +79,6 @@ void setupRandom() {
         }
 
         nodes[i][j].displayPos.add(PVector.sub(nodes[i][j].displayPos, closest).normalize());
-        nodes[i][j].displayPos = pmod(nodes[i][j].displayPos, width, height);
       }
     }
   }
@@ -92,8 +91,6 @@ void setupRandom() {
       for (int k = 0; k < nodes.length; k++) {
         for (int l = 0; l < nodes[k].length; l++) {
           boolean inRadius = PVector.dist(nodes[i][j].displayPos, nodes[k][l].displayPos) < radius;
-          inRadius |= PVector.dist(pmod(nodes[i][j].displayPos, width, height), nodes[k][l].displayPos) < radius;
-          inRadius |= PVector.dist(nodes[i][j].displayPos, pmod(nodes[k][l].displayPos, width, height)) < radius;
           if ((i != k || j != l) && inRadius) {
             PVector delta = PVector.sub(nodes[i][j].displayPos, nodes[k][l].displayPos);
             nodes[i][j].addEdge(delta, nodes[k][l], false);
