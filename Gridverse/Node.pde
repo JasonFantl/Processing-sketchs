@@ -54,8 +54,10 @@ class Node {
       if (edges[i].flipped) {
        stroke(10, 20, 150); 
       }
+      if (displayPos.dist(edges[i].to.displayPos) < 200) {
       // line(displayPos.x, displayPos.y, edges[i].to.displayPos.x, edges[i].to.displayPos.y);
       line(displayPos.x, displayPos.y, displayPos.z, edges[i].to.displayPos.x, edges[i].to.displayPos.y, edges[i].to.displayPos.z);
+    }
     }
   }
 }
