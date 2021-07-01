@@ -2,13 +2,12 @@ class Photon {
 
   Node location;
 
-  PVector velocity;
+  PVector velocity; // velocity of desired
   PVector desired;
-  PVector current;
-
-  float[][] orientation;
-  boolean flipped;
-
+  PVector current; // to keep track of delta from desired
+  float[][] orientation; // for easy transformation
+  boolean flipped; // not necessary, orientation keeps track of this, but makes it conceptual easier
+  
   Photon(Node startNode, PVector vel) {
     location = startNode;
     velocity = vel;
@@ -19,7 +18,10 @@ class Photon {
   }
 
   void move() {
-
+    if (location.solid) {
+      return;
+    }
+    
     desired.add(velocity);
 
 
@@ -47,29 +49,17 @@ class Photon {
       }
 
 
-      println();
-
       if (outEdge.flipped) {
         flipped = !flipped;
-        println("fliping");
       }
 
-      println(flipped);
       // match inEdge to orientation
-      printVector(outVector);
-      printVector(inVector);
-
       PVector delta = inVector;
       if (!flipped) {
        delta = inverseAngle(delta); 
       }
       PVector rotationDelta = rotateVector(PVector.mult(outVector, -1), delta);
-      printVector(rotationDelta);
-
       orientation = matrixXTo(rotationDelta, flipped);
-      printArray(orientation);
-
-
 
       location = outEdge.to;
       current = bestNextPos;
@@ -127,6 +117,9 @@ class Photon {
 
     noStroke();
     fill(100, 100, 250);
+    if (location.solid) {
+      fill(200, 200, 250);
+    }
     // circle(location.displayPos.x, location.displayPos.y, displayDis/2);
     pushMatrix();
     translate(location.displayPos.x, location.displayPos.y, location.displayPos.z);

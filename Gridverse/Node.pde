@@ -14,6 +14,9 @@ class Node {
   
   Edge[] edges;
   
+  boolean solid;
+  color col;
+  
   PVector displayPos;
   
   Node(float x, float y) {
@@ -21,7 +24,18 @@ class Node {
     edges = new Edge[0];
   }
   
-  Node(float x, float y, float z) {
+  Node(boolean _solid, color _col, float x, float y, float z) {
+    solid = _solid;
+    col = _col;
+    
+    displayPos = new PVector(x, y, z);
+    edges = new Edge[0];
+  }
+  
+    Node(float x, float y, float z) {
+    solid = false;
+    col = color(0,0,0);
+    
     displayPos = new PVector(x, y, z);
     edges = new Edge[0];
   }
@@ -38,7 +52,11 @@ class Node {
   
   void displayNode() {
     noStroke();
-    fill(200, 10, 40);
+    fill(100, 100, 100, 100);
+    if (solid) {
+      fill(col);
+    }
+    
     // circle(displayPos.x, displayPos.y, displayDis/2);
     pushMatrix();
     translate(displayPos.x, displayPos.y, displayPos.z);
