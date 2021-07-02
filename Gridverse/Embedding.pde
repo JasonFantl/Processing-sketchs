@@ -130,3 +130,16 @@ PVector[] bestFitPlane(Node center, ArrayList<Node> nodes) {
 
   return plane;
 }
+
+
+int mod(int a, int b) {
+  int c = a % b;
+  if (c < 0) {
+    return b + c;
+  }
+  return c;
+}
+
+PVector pmod(PVector vec, int m, int n) {
+  return new PVector(mod(int(vec.x), m), mod(int(vec.y), n));
+}

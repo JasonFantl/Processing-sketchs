@@ -7,7 +7,7 @@ class Photon {
   PVector current; // to keep track of delta from desired
   float[][] orientation; // for easy transformation
   boolean flipped; // not necessary, orientation keeps track of this, but makes it conceptual easier
-  
+
   Photon(Node startNode, PVector vel) {
     location = startNode;
     velocity = vel;
@@ -21,7 +21,7 @@ class Photon {
     if (location.solid) {
       return;
     }
-    
+
     desired.add(velocity);
 
 
@@ -56,7 +56,7 @@ class Photon {
       // match inEdge to orientation
       PVector delta = inVector;
       if (!flipped) {
-       delta = inverseAngle(delta); 
+        delta = inverseAngle(delta);
       }
       PVector rotationDelta = rotateVector(PVector.mult(outVector, -1), delta);
       orientation = matrixXTo(rotationDelta, flipped);
@@ -66,65 +66,16 @@ class Photon {
     }
   }
 
-  PVector inverseAngle(PVector in) {
-    return new PVector(in.x, -in.y);
-  }
-
-  PVector rotateVector(PVector toRotate, PVector rotation) {
-    rotation = rotation.normalize();
-    // Construct rotation matrix
-    // M =  [  rotation.x  -rotation.y  ]
-    //      [  rotation.y  rotation.x  ]
-    // then left multiply to toRotate to get result
-    PVector multiplied = new PVector(rotation.x * toRotate.x - rotation.y * toRotate.y, rotation.y * toRotate.x + rotation.x * toRotate.y);
-    return multiplied.normalize();
-  }
-
-  PVector applyMatrix(float[][] matrix, PVector vector) {
-    float x = matrix[0][0]*vector.x + matrix[0][1]*vector.y;
-    float y = matrix[1][0]*vector.x + matrix[1][1]*vector.y;
-
-    return new PVector(x, y);
-  }
-
-  float[][] multMatrix(float[][] m1, float[][] m2) {
-    float[] xRow = {m1[0][0]*m2[0][0] + m1[0][1]*m2[1][0], m1[0][0]*m2[0][1] + m1[0][1]*m2[1][1]};
-    float[] yRow = {m1[1][0]*m2[0][0] + m1[1][1]*m2[1][0], m1[1][0]*m2[0][1] + m1[1][1]*m2[1][1]};
-    return new float[][]{xRow, yRow};
-  }
-
-  float[][] matrixXTo(PVector dir, boolean flip) {
-    // Construct identity matrix
-    float[] Ix = {1, 0};
-    float[] Iy = {0, 1};
-    if (flip) { 
-      Iy[1] = -1;
-    }
-    float[][] I = {Ix, Iy};
-
-
-    // Construct rotation matrix
-    // rotates x axis to match vector
-    // M =  [  rotation.x  -rotation.y  ]
-    //      [  rotation.y  rotation.x  ]
-    //float[][] rotationMatrix = {{dir.y, dir.x}, {-dir.x, dir.y}};
-    float[][] rotationMatrix = {{dir.x, -dir.y}, {dir.y, dir.x}};
-
-    return multMatrix(rotationMatrix, I);
-  }
-
   void display() {
 
-    noStroke();
-    fill(100, 100, 250);
+    strokeWeight(10);
+    stroke(100, 100, 250);
     if (location.solid) {
-      fill(200, 200, 250);
+      stroke(200, 200, 250);
     }
-    // circle(location.displayPos.x, location.displayPos.y, displayDis/2);
-    pushMatrix();
-    translate(location.displayPos.x, location.displayPos.y, location.displayPos.z);
-    sphere(displayDis);
-    popMatrix();
+
+    point(location.displayPos.x, location.displayPos.y, location.displayPos.z);
+
   }
 
 
@@ -145,4 +96,51 @@ class Photon {
   void printVector(PVector vec) {
     printArray(new float[][]{vec.array()});
   }
+}
+
+PVector inverseAngle(PVector in) {
+  return new PVector(in.x, -in.y);
+}
+
+PVector rotateVector(PVector toRotate, PVector rotation) {
+  rotation = rotation.normalize();
+  // Construct rotation matrix
+  // M =  [  rotation.x  -rotation.y  ]
+  //      [  rotation.y  rotation.x  ]
+  // then left multiply to toRotate to get result
+  PVector multiplied = new PVector(rotation.x * toRotate.x - rotation.y * toRotate.y, rotation.y * toRotate.x + rotation.x * toRotate.y);
+  return multiplied.normalize();
+}
+
+PVector applyMatrix(float[][] matrix, PVector vector) {
+  float x = matrix[0][0]*vector.x + matrix[0][1]*vector.y;
+  float y = matrix[1][0]*vector.x + matrix[1][1]*vector.y;
+
+  return new PVector(x, y);
+}
+
+float[][] multMatrix(float[][] m1, float[][] m2) {
+  float[] xRow = {m1[0][0]*m2[0][0] + m1[0][1]*m2[1][0], m1[0][0]*m2[0][1] + m1[0][1]*m2[1][1]};
+  float[] yRow = {m1[1][0]*m2[0][0] + m1[1][1]*m2[1][0], m1[1][0]*m2[0][1] + m1[1][1]*m2[1][1]};
+  return new float[][]{xRow, yRow};
+}
+
+float[][] matrixXTo(PVector dir, boolean flip) {
+  // Construct identity matrix
+  float[] Ix = {1, 0};
+  float[] Iy = {0, 1};
+  if (flip) { 
+    Iy[1] = -1;
+  }
+  float[][] I = {Ix, Iy};
+
+
+  // Construct rotation matrix
+  // rotates x axis to match vector
+  // M =  [  rotation.x  -rotation.y  ]
+  //      [  rotation.y  rotation.x  ]
+  //float[][] rotationMatrix = {{dir.y, dir.x}, {-dir.x, dir.y}};
+  float[][] rotationMatrix = {{dir.x, -dir.y}, {dir.y, dir.x}};
+
+  return multMatrix(rotationMatrix, I);
 }

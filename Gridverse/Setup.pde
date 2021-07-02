@@ -1,13 +1,11 @@
 
 void setupEuclidianTorus() {
-  nodes = new Node[300][300];
-  PVector velocity = new PVector(0.2, 0.5);
-
+  nodes = new Node[100][100];
 
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis);
+      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
     }
   }
   // then add edges
@@ -21,11 +19,32 @@ void setupEuclidianTorus() {
       nodes[i][j].addEdge(PVector.fromAngle(angle - PI / 2), nodes[i][mod(j - 1, nodes[i].length)], false);
     }
   }
+  
+  // set solid state
+  for (int i = 0; i < nodes.length; i++) {
+    for (int j = 0; j < nodes[i].length; j++) {
+      boolean solid = false;
+      color col = color(100, 100, 100, 100);
+      if (i > nodes.length*2/3 && i < nodes.length*4/5 && j > nodes[i].length*2/3 && j < nodes[i].length) {
+        solid = true;
+        col = color(200, 100, 100);
+      }
+      if (i > nodes.length/3 && i < nodes.length/2 && j > nodes[i].length/2 && j < nodes[i].length*4/5) {
+        solid = true;
+        col = color(200, 100, 200);
+      }
+
+      if (solid) {
+        nodes[i][j].col = col;
+        nodes[i][j].solid = true;
+      }
+    }
+  }
 }
 
 void setupBump() {
   // init nodes first
-  nodes = new Node[30][30];
+  nodes = new Node[100][100];
 
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
@@ -46,6 +65,11 @@ void setupBump() {
 
 
       nodes[i][j] = new Node(x, y, z);
+      
+      if (i == 0 || i == nodes.length-1 || j == 0 || j == nodes[i].length - 1) {
+        nodes[i][j].solid = true;
+        nodes[i][j].col = color(200, 10, 50);
+      }
     }
   }
 
@@ -98,7 +122,7 @@ void setupRandom() {
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node(random(width), random(height));
+      nodes[i][j] = new Node(random(width), random(height), 0);
     }
   }
 
@@ -143,11 +167,11 @@ void setupRandom() {
 
 
 void setupSphere() {
-  nodes = new Node[15][15];
+  nodes = new Node[100][100];
 
   // generate points using fibinacchi point placing
 
-  float radius = 500.0;
+  float radius = displayDis*100;
 
   float phi = 2.39996322972865332; // the golden angle
   int samples = nodes.length * nodes.length;
@@ -159,15 +183,24 @@ void setupSphere() {
       float y = 1 - (n / float(samples - 1)) * 2;
       float yradius = sqrt(1 - y * y);
 
-      float theta = phi * n;
+      float theta = (phi * n) % TWO_PI;
 
       float x = cos(theta) * yradius;
       float z = sin(theta) * yradius;
 
       nodes[i][j] = new Node(x * radius, y * radius, z * radius);
+      
+      if (y > 0.9) {
+       nodes[i][j].solid = true;
+       nodes[i][j].col = color(90, 10, 150);
+      }
+      //if (theta > PI*4/3 && y > 0.5) {
+      // nodes[i][j].solid = true;
+      // nodes[i][j].col = color(200, 10, 50);
+      //}
     }
   }
 
   // then add edges
-  generateEdgesFor3DEmbedding(radius/2.5);
+  generateEdgesFor3DEmbedding(displayDis*5);
 }
