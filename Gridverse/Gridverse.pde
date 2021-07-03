@@ -19,17 +19,22 @@ void setup() {
   rectMode(CORNERS);
   cam = new PeasyCam(this, 400);
 
-
-  // nodes should be approximatly 1 distance apart
-  setupEuclidianTorus();
-  //setupMobiusStrip();
+  //setupCylinder();
+    //setupMobiusStrip();
+    
+  //setupTorus();
+  //setupKlein();
+  //setupProjectivePlane();
+  
+  //setupCone();
   //setupSphere();
   //setupBump();
-  //setupCylinder();
+  
+  setupTardis();
 
   // random stuff for testing
   photon = new Photon(nodes[0][0], new PVector(0.1, 0.8), color(10, 100, 200));  // velocity should be around mag of 1, probably less
-  mass = new Mass(nodes[10][0], new PVector(0.4, -0.3), color(200, 230, 230));
+  mass = new Mass(nodes[10][0], new PVector(0.4, -0.3), color(200, 230, 230), 3);
 
   camera = new Camera(nodes[5][5], new PVector(2, 0)); // set move vec to different magnatude to make world "smalledr" or "bigger"
 }

@@ -5,7 +5,7 @@ class Camera {
   Mass mass; // well also use mass to keep track of position
 
   Camera(Node startNode, PVector _moveDelta) {
-    mass = new Mass(startNode, new PVector(0, 0), color(200, 200, 100));
+    mass = new Mass(startNode, new PVector(0, 0), color(200, 200, 100), 0);
     moveDelta = _moveDelta;
   }
 
@@ -55,8 +55,9 @@ class Camera {
       photon.position.flipped = mass.position.flipped;
       photon.position.desired = mass.position.desired.copy();
 
-      photon.forceMove(); // take a ste so our own body doesnt block
-      photon.forceMove(); // take a ste so our own body doesnt block
+      photon.forceMove(); // take a step so our own body doesnt block
+      photon.forceMove(); // take a step so our own body doesnt block
+      photon.forceMove(); // take a step so our own body doesnt block
 
       color col = color(0, 0, 0);
 
@@ -93,10 +94,6 @@ class Camera {
   }
 
   void display() {
-    stroke(100, 200, 100);
-    PVector pos = camera.mass.position.node.displayPos;
-    point(pos.x, pos.y, pos.z);
-
     // get direction
     PVector dir = moveDelta.copy().normalize();
     Photon photon = new Photon(mass.position.node, dir, color(0, 0, 0));

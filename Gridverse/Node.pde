@@ -23,16 +23,16 @@ class Node {
     displayPos = new PVector(x, y, z);
     edges = new Edge[0];
   }
-  
+
   boolean solid() {
-   return !masses.isEmpty(); 
+    return !masses.isEmpty();
   }
   color col() {
     if (solid()) {
-   return masses.get(0).col; 
+      return masses.get(0).col;
+    }
+    return color(0, 0, 0);
   }
-return color(0,0,0);
-}
 
   void addEdge(PVector connection, Node node, boolean flipped) {
     Edge[] newEdges = new Edge[edges.length + 1];
@@ -51,6 +51,26 @@ return color(0,0,0);
       stroke(masses.get(0).col, 255);
     }
     point(displayPos.x, displayPos.y, displayPos.z);
+
+    boolean invalid  =false;
+    //debugging
+    for (Edge edgeOut : edges) {
+      boolean connected = false;
+      for (Edge edgeIn : edgeOut.to.edges) {
+        if (edgeIn.to == this) {
+          connected = true;
+        }
+      }
+      if (!connected) {
+        invalid = true;
+      }
+    }
+
+    if (invalid) {
+      strokeWeight(20);
+      stroke(255, 100, 100);
+      point(displayPos.x, displayPos.y, displayPos.z);
+    }
   }
 
   void displayEdges() {

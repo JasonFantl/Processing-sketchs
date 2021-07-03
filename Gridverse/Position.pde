@@ -52,7 +52,10 @@ class Position {
           inVector = outEdge.to.edges[i].connection;
         }
       }
-
+      
+      if (inVector == null) {
+       println("Found invalid connection, every edge must have an inverse"); 
+      }
 
       if (outEdge.flipped) {
         newPos.flipped = !newPos.flipped;
