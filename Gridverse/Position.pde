@@ -4,7 +4,6 @@ class Position {
   Node node;
 
   PVector desired;
-  PVector current; // to keep track of delta from desired
   float[][] orientation; // for easy transformation
   boolean flipped; // not necessary, orientation keeps track of this, but makes it conceptual easier
 
@@ -13,7 +12,6 @@ class Position {
     orientation = _orientation;
     flipped = _flipped;
     desired = new PVector(0, 0);
-    current = new PVector(0, 0);
   }
 
 
@@ -32,18 +30,16 @@ class Position {
     // setup a copy of the current pos
     Position newPos = new Position(node, orientation, flipped);
     newPos.desired = desired.copy();
-    newPos.current = current.copy();
 
     Edge outEdge = null;
     PVector outVector = null;
-    PVector bestNextPos = current;
+    PVector bestNextPos = new PVector(0,0);
 
     for (int i = 0; i < node.edges.length; i++) {
       PVector rotatedEdge = applyMatrix(orientation, node.edges[i].connection);
-      PVector nextPos = PVector.add(current, rotatedEdge);
-      if (PVector.dist(nextPos, desired) < PVector.dist(bestNextPos, desired)) {
+      if (PVector.dist(rotatedEdge, desired) < PVector.dist(bestNextPos, desired)) {
         outEdge = node.edges[i];
-        bestNextPos = nextPos;
+        bestNextPos = rotatedEdge;
         outVector = rotatedEdge;
       }
     }
@@ -71,7 +67,7 @@ class Position {
       newPos.orientation = matrixXTo(rotationDelta, newPos.flipped);
 
       newPos.node = outEdge.to;
-      newPos.current = bestNextPos;
+      newPos.desired = PVector.sub(desired, outVector);
     }
     return newPos;
   }

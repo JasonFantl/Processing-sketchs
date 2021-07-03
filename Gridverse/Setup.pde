@@ -17,25 +17,63 @@ void setupEuclidianTorus() {
       nodes[i][j].addEdge(PVector.fromAngle(angle + PI), nodes[mod(i - 1, nodes.length)][j], false);
       nodes[i][j].addEdge(PVector.fromAngle(angle + PI / 2), nodes[i][mod(j + 1, nodes[i].length)], false);
       nodes[i][j].addEdge(PVector.fromAngle(angle - PI / 2), nodes[i][mod(j - 1, nodes[i].length)], false);
-    }
-  }
-  
-  // set solid state
-  for (int i = 0; i < nodes.length; i++) {
-    for (int j = 0; j < nodes[i].length; j++) {
-      boolean solid = false;
-      color col = color(100, 100, 100, 100);
+
+
       if (i > nodes.length*2/3 && i < nodes.length*4/5 && j > nodes[i].length*2/3 && j < nodes[i].length) {
-        solid = true;
-        col = color(200, 100, 100);
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 100));
       }
       if (i > nodes.length/3 && i < nodes.length/2 && j > nodes[i].length/2 && j < nodes[i].length*4/5) {
-        solid = true;
-        col = color(200, 100, 200);
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 200));
+      }
+    }
+  }
+}
+
+void setupMobiusStrip() {
+  nodes = new Node[100][100];
+
+  // init nodes first
+  for (int i = 0; i < nodes.length; i++) {
+    for (int j = 0; j < nodes[i].length; j++) {
+      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+    }
+  }
+  // then add edges
+  for (int i = 0; i < nodes.length; i++) {
+    for (int j = 0; j < nodes[i].length; j++) {
+      if (i > 0) {
+        nodes[i][j].addEdge(PVector.fromAngle( PI), nodes[i - 1][j], false);
+      } 
+      if (i < nodes.length-1) {
+        nodes[i][j].addEdge(PVector.fromAngle(0), nodes[i + 1][j], false);
+      } 
+      if (i == 0) {
+        nodes[i][j].addEdge(PVector.fromAngle( PI), nodes[nodes.length - 1][nodes[i].length - j - 1], true);
+      } 
+      if (i == nodes.length-1) {
+        nodes[i][j].addEdge(PVector.fromAngle(0), nodes[0][nodes[i].length - j - 1], true);
       }
 
-      if (solid) {
-        Mass newMass = new Mass(nodes[i][j], new PVector(0,0), col);
+      if (j > 0) {
+        nodes[i][j].addEdge(PVector.fromAngle( - PI / 2), nodes[i][j - 1], false);
+      } 
+      if (j < nodes[i].length-1) {
+        nodes[i][j].addEdge(PVector.fromAngle(PI / 2), nodes[i][j + 1], false);
+      } 
+      //else if (j == 0) {
+      //  nodes[i][j].addEdge(PVector.fromAngle( - PI / 2), nodes[i][j - 1], true);
+      //} else if (j == nodes[i].length-1) {
+      //  nodes[i][j].addEdge(PVector.fromAngle(PI / 2), nodes[i][j + 1], true);
+      //}
+
+            if (i > nodes.length*0.5 && i < nodes.length*0.8 && j > nodes[i].length*0.1 && j < nodes[i].length*0.2) {
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 200));
+      }
+      if (i > nodes.length*0.2 && i < nodes.length*0.25 && j > nodes[i].length*0.7 && j < nodes[i].length*0.8) {
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(20, 100, 20));
+      }
+      if (j == 0 || j == nodes[j].length-1) {
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(100, 100, 200));
       }
     }
   }
@@ -59,23 +97,23 @@ void setupBump() {
       float radius = 0.5;
       if (r < radius) {
         r /= radius;
-        z = exp(-1.0/(1-r*r))*nodes.length*displayDis*radius;
+        z = exp(-1.0/(1-r*r))*nodes.length*displayDis*radius/2;
       }
 
 
       nodes[i][j] = new Node(x, y, z);
-      
+
       if (i == 0 || i == nodes.length-1 || j == 0 || j == nodes[i].length - 1) {
         color col = color(200, 100, 100);
-        if (i %2 == 0 && j % 2 ==0 ) {
+        if (i/4 %2 == 0 ) {
           col = color(100, 200, 100);
         }
-        Mass newMass = new Mass(nodes[i][j], new PVector(0,0), col);
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), col);
       }
     }
   }
 
-  generateEdgesFor3DEmbedding(displayDis*1.5);
+  generateEdgesFor3DEmbedding(displayDis*1.5-1);
 }
 
 void setupCylinder() {
@@ -89,13 +127,13 @@ void setupCylinder() {
       float y = cos(angle)* nodes.length*displayDis/TWO_PI;
       float z = (j - nodes[i].length/2) * displayDis;
       nodes[i][j] = new Node(x, y, z);
-      
+
       if (j == 0 || j == nodes[i].length - 1) {
         color col = color(200, 100, 100);
-        if (i %2 == 0 ) {
+        if (i/4 %2 == 0 ) {
           col = color(100, 200, 100);
         }
-        Mass newMass = new Mass(nodes[i][j], new PVector(0,0), col);
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), col);
       }
     }
   }
@@ -127,16 +165,12 @@ void setupSphere() {
       float z = sin(theta) * yradius;
 
       nodes[i][j] = new Node(x * radius, y * radius, z * radius);
-      
+
       if (y > 0.9) {
-                Mass newMass = new Mass(nodes[i][j], new PVector(0,0), color(90, 10, 150));
-       //nodes[i][j].solid = true;
-       //nodes[i][j].col = color(90, 10, 150);
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(90, 10, 150));
       }
-      if (theta > PI*4/3 && y > 0.5) {
-                Mass newMass = new Mass(nodes[i][j], new PVector(0,0), color(200, 10, 50));
-      // nodes[i][j].solid = true;
-      // nodes[i][j].col = color(200, 10, 50);
+      if (theta > PI*4/3 && y > 0.5 && y < 0.7) {
+        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 10, 50));
       }
     }
   }

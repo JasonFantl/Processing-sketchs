@@ -14,23 +14,24 @@ int displayDis = 10;
 
 
 void setup() {
-  size(900, 800, P3D);
+  size(1200, 1000, P3D);
 
   rectMode(CORNERS);
   cam = new PeasyCam(this, 400);
 
 
   // nodes should be approximatly 1 distance apart
-  //setupEuclidianTorus();
+  setupEuclidianTorus();
+  //setupMobiusStrip();
   //setupSphere();
   //setupBump();
-  setupCylinder();
+  //setupCylinder();
 
   // random stuff for testing
   photon = new Photon(nodes[0][0], new PVector(0.1, 0.8), color(10, 100, 200));  // velocity should be around mag of 1, probably less
   mass = new Mass(nodes[10][0], new PVector(0.4, -0.3), color(200, 230, 230));
-  
-  camera = new Camera(nodes[1][1], new PVector(0.5, 0));
+
+  camera = new Camera(nodes[5][5], new PVector(2, 0)); // set move vec to different magnatude to make world "smalledr" or "bigger"
 }
 
 void draw() {
@@ -54,11 +55,35 @@ void draw() {
   }
 }
 
+// to keep track of key presses
+boolean[] keys = new boolean[4];
 void keyPressed() {
   if (keyPressed && key == CODED) {
     if (keyCode == ALT) {
       viewCamera = !viewCamera;
       println("switching view");
     }
+
+    if (keyCode == UP) {
+      keys[0] = true;
+    } else if (keyCode == DOWN) {
+      keys[1] = true;
+    } else if (keyCode == LEFT) {
+      keys[2] = true;
+    } else if (keyCode == RIGHT) {
+      keys[3] = true;
+    }
+  }
+}
+
+void keyReleased() {    
+  if (keyCode == UP) {
+    keys[0] = false;
+  } else if (keyCode == DOWN) {
+    keys[1] = false;
+  } else if (keyCode == LEFT) {
+    keys[2] = false;
+  } else if (keyCode == RIGHT) {
+    keys[3] = false;
   }
 }

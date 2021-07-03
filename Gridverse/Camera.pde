@@ -13,16 +13,17 @@ class Camera {
 
 
   void move() {
-    if (keyPressed && key == CODED) {
-      if (keyCode == UP) {
-        mass.position.desired.add(moveDelta);
-      } else if (keyCode == DOWN) {
-        mass.position.desired.sub(moveDelta);
-      } else if (keyCode == LEFT) {
-        moveDelta.rotate(-PI/64);
-      } else if (keyCode == RIGHT) {
-        moveDelta.rotate(PI/64);
-      }
+    if (keys[0]) {
+      mass.position.desired.add(moveDelta);
+    } 
+    if (keys[1]) {
+      mass.position.desired.sub(moveDelta);
+    }
+    if (keys[2]) {
+      moveDelta.rotate(-PI/100);
+    } 
+    if (keys[3]) {
+      moveDelta.rotate(PI/100);
     }
 
     mass.move();
@@ -52,7 +53,9 @@ class Camera {
       Photon photon = new Photon(mass.position.node, dir, color(0, 0, 0));
       photon.position.orientation = mass.position.orientation;
       photon.position.flipped = mass.position.flipped;
-      photon.position.desired = PVector.sub(mass.position.desired, mass.position.current);
+      photon.position.desired = mass.position.desired.copy();
+
+      photon.forceMove(); // take a ste so our own body doesnt block
       photon.forceMove(); // take a ste so our own body doesnt block
 
       color col = color(0, 0, 0);
@@ -60,7 +63,7 @@ class Camera {
       int timeout = 1000;
       int viewDistance = 1000;
       int counter = 0;
-      while (photon.position.current.mag() < viewDistance && counter < timeout) {
+      while (photon.traveled < viewDistance && counter < timeout) {
         if (photon.position.node.solid()) {
           col = photon.position.node.col();
           break;
@@ -71,17 +74,17 @@ class Camera {
 
       // apply projection distance so we dont get fisheye effect
       // ok, so. Close up to a wall, many photons end on the same node, but since the nodes arrive at different angles, we get the cos(angle) messes up the height
-      float dis = photon.position.current.mag()*cos(angle);
+      float dis = photon.traveled*cos(angle);
 
       noStroke();
 
       if (photon.position.node.solid()) {
-        float shadingDis = moveDelta.mag()*30;
+        float shadingDis = 20*moveDelta.mag();
         col = color(red(col)/max(1, dis/shadingDis), green(col)/max(1, dis/shadingDis), blue(col)/max(1, dis/shadingDis));
         fill(col);
         float w = float(width)/pixelCount;
         float x = i*w;
-        float y =  moveDelta.mag()*height/dis;
+        float y =  5*height/dis;
         rect(x, height/2 -y, x+w, height/2+y);
       }
     }
