@@ -1,20 +1,31 @@
-//class Mass {
+class Mass {
+
+  Position position;
+  PVector velocity; // velocity of desired
+  color col;
   
-//  PVector velocity;
-//  Node location;
-//  color col;
-  
-// Mass(Node _location, color _col, PVector _velocity) {
-//  location = _location;
-//  col = _col;
-//  velocity = _velocity;
-// }
- 
-// void move() {
-//  // first remove self from current node
-//  location.masses.remove(this);
-  
-  
-//  location
-// }
-//}
+  Mass(Node startNode, PVector vel, color _col) {
+    startNode.masses.add(this);
+    position = new Position(startNode, new float[][]{{1, 0}, {0, 1}}, false);
+    velocity = vel;
+        col = _col;
+  }
+
+  void move() {
+    // remove self from the nodes masses list
+    position.node.masses.remove(this);
+
+      position.desired.add(velocity);
+      position = position.move();
+
+    // add self to new nodes masses
+    position.node.masses.add(this);
+  }
+
+  void display() {
+    strokeWeight(10);
+    stroke(col);
+    PVector pos = position.node.displayPos;
+    point(pos.x, pos.y, pos.z);
+  }
+}

@@ -14,26 +14,25 @@ class Node {
 
   Edge[] edges;
   ArrayList<Mass> masses;
-  boolean solid;
-  color col;
 
   PVector displayPos;
 
-  Node(boolean _solid, color _col, float x, float y, float z) {
-    solid = _solid;
-    col = _col;
-
-    displayPos = new PVector(x, y, z);
-    edges = new Edge[0];
-  }
-
   Node(float x, float y, float z) {
-    solid = false;
-    col = color(0, 0, 0);
+    masses = new ArrayList<Mass>();
 
     displayPos = new PVector(x, y, z);
     edges = new Edge[0];
   }
+  
+  boolean solid() {
+   return !masses.isEmpty(); 
+  }
+  color col() {
+    if (solid()) {
+   return masses.get(0).col; 
+  }
+return color(0,0,0);
+}
 
   void addEdge(PVector connection, Node node, boolean flipped) {
     Edge[] newEdges = new Edge[edges.length + 1];
@@ -48,8 +47,8 @@ class Node {
   void displayNode() {
     stroke(100, 100, 100, 100);
     strokeWeight(10);
-    if (solid) {
-      stroke(col, 255);
+    if (solid()) {
+      stroke(masses.get(0).col, 255);
     }
     point(displayPos.x, displayPos.y, displayPos.z);
   }

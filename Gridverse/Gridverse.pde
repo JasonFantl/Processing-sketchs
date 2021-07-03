@@ -4,11 +4,13 @@ PeasyCam cam;
 boolean viewCamera = false;
 
 Node[][] nodes;
+
 Photon photon;
+Mass mass;
 
 Camera camera;
 
-int displayDis = 3;
+int displayDis = 10;
 
 
 void setup() {
@@ -19,23 +21,23 @@ void setup() {
 
 
   // nodes should be approximatly 1 distance apart
-  setupEuclidianTorus();
+  //setupEuclidianTorus();
   //setupSphere();
   //setupBump();
-  //setupRandom();
-  //setup3DGrid();
-  //setupCylinder();
+  setupCylinder();
 
-  // photon simpley for testing purposes
-  photon = new Photon(nodes[0][0], new PVector(0.1, 0.8));  // velocity should be around mag of 1, probably less
-
-  camera = new Camera(nodes[1][1], new PVector(2, 0));
+  // random stuff for testing
+  photon = new Photon(nodes[0][0], new PVector(0.1, 0.8), color(10, 100, 200));  // velocity should be around mag of 1, probably less
+  mass = new Mass(nodes[10][0], new PVector(0.4, -0.3), color(200, 230, 230));
+  
+  camera = new Camera(nodes[1][1], new PVector(0.5, 0));
 }
 
 void draw() {
   background(51);
   camera.move();
   photon.move();
+  mass.move();
 
   if (viewCamera) {
     camera.takePicture();

@@ -35,8 +35,7 @@ void setupEuclidianTorus() {
       }
 
       if (solid) {
-        nodes[i][j].col = col;
-        nodes[i][j].solid = true;
+        Mass newMass = new Mass(nodes[i][j], new PVector(0,0), col);
       }
     }
   }
@@ -67,39 +66,20 @@ void setupBump() {
       nodes[i][j] = new Node(x, y, z);
       
       if (i == 0 || i == nodes.length-1 || j == 0 || j == nodes[i].length - 1) {
-        nodes[i][j].solid = true;
-        nodes[i][j].col = color(200, 10, 50);
+        color col = color(200, 100, 100);
+        if (i %2 == 0 && j % 2 ==0 ) {
+          col = color(100, 200, 100);
+        }
+        Mass newMass = new Mass(nodes[i][j], new PVector(0,0), col);
       }
     }
   }
 
-  generateEdgesFor3DEmbedding(displayDis*2);
-}
-
-
-void setup3DGrid() {
-  nodes = new Node[20][20];
-
-  // init nodes first
-  for (int i = 0; i < nodes.length; i++) {
-    for (int j = 0; j < nodes[i].length; j++) {
-      float x2 = (i - nodes.length/2) * displayDis;
-      float y2 = (j - nodes[i].length/2) * displayDis;
-      // M =  [  2  3  ]
-      //      [  -1 0  ]
-      //      [  4  -2 ]
-      float x = 2*x2 + 3 * y2;
-      float y = -1*x2 + 0*y2;
-      float z = 4*x2 - 2*y2;
-      nodes[i][j] = new Node(x, y, z);
-    }
-  }
-  // then add edges
-  generateEdgesFor3DEmbedding(displayDis*5);
+  generateEdgesFor3DEmbedding(displayDis*1.5);
 }
 
 void setupCylinder() {
-  nodes = new Node[35][20];
+  nodes = new Node[100][50];
 
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
@@ -109,60 +89,18 @@ void setupCylinder() {
       float y = cos(angle)* nodes.length*displayDis/TWO_PI;
       float z = (j - nodes[i].length/2) * displayDis;
       nodes[i][j] = new Node(x, y, z);
+      
+      if (j == 0 || j == nodes[i].length - 1) {
+        color col = color(200, 100, 100);
+        if (i %2 == 0 ) {
+          col = color(100, 200, 100);
+        }
+        Mass newMass = new Mass(nodes[i][j], new PVector(0,0), col);
+      }
     }
   }
   // then add edges
   generateEdgesFor3DEmbedding(displayDis+1);
-}
-
-
-void setupRandom() {
-  nodes = new Node[35][35];
-
-  // init nodes first
-  for (int i = 0; i < nodes.length; i++) {
-    for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node(random(width), random(height), 0);
-    }
-  }
-
-  // seperate nodes
-  for (int u = 0; u < 40; u++) {
-    for (int i = 0; i < nodes.length; i++) {
-      for (int j = 0; j < nodes[i].length; j++) {
-        // get closest
-        PVector closest = null;
-        for (int k = 0; k < nodes.length; k++) {
-          for (int l = 0; l < nodes[k].length; l++) {
-            if (i != k || j != l) {
-              if (closest == null || PVector.dist(nodes[i][j].displayPos, nodes[k][l].displayPos) < PVector.dist(nodes[i][j].displayPos, closest)) {
-                closest = nodes[k][l].displayPos;
-              }
-            }
-          }
-        }
-
-        nodes[i][j].displayPos.add(PVector.sub(nodes[i][j].displayPos, closest).normalize());
-      }
-    }
-  }
-
-  // then add edges
-  for (int i = 0; i < nodes.length; i++) {
-    for (int j = 0; j < nodes[i].length; j++) {
-      // check for all withen radius
-      float radius = 50.0;
-      for (int k = 0; k < nodes.length; k++) {
-        for (int l = 0; l < nodes[k].length; l++) {
-          boolean inRadius = PVector.dist(nodes[i][j].displayPos, nodes[k][l].displayPos) < radius;
-          if ((i != k || j != l) && inRadius) {
-            PVector delta = PVector.sub(nodes[i][j].displayPos, nodes[k][l].displayPos);
-            nodes[i][j].addEdge(delta, nodes[k][l], false);
-          }
-        }
-      }
-    }
-  }
 }
 
 
@@ -191,13 +129,15 @@ void setupSphere() {
       nodes[i][j] = new Node(x * radius, y * radius, z * radius);
       
       if (y > 0.9) {
-       nodes[i][j].solid = true;
-       nodes[i][j].col = color(90, 10, 150);
+                Mass newMass = new Mass(nodes[i][j], new PVector(0,0), color(90, 10, 150));
+       //nodes[i][j].solid = true;
+       //nodes[i][j].col = color(90, 10, 150);
       }
-      //if (theta > PI*4/3 && y > 0.5) {
+      if (theta > PI*4/3 && y > 0.5) {
+                Mass newMass = new Mass(nodes[i][j], new PVector(0,0), color(200, 10, 50));
       // nodes[i][j].solid = true;
       // nodes[i][j].col = color(200, 10, 50);
-      //}
+      }
     }
   }
 
