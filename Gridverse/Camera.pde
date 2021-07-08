@@ -5,7 +5,7 @@ class Camera {
   Mass mass; // well also use mass to keep track of position
 
   Camera(Node startNode, PVector _moveDelta) {
-    mass = new Mass(startNode, new PVector(0, 0), color(200, 200, 100), 0);
+    mass = new Mass(startNode, new PVector(0, 0), color(200, 200, 100), 2);
     moveDelta = _moveDelta;
   }
 
@@ -80,8 +80,9 @@ class Camera {
       noStroke();
 
       if (photon.position.node.solid()) {
-        float shadingDis = 20*moveDelta.mag();
-        col = color(red(col)/max(1, dis/shadingDis), green(col)/max(1, dis/shadingDis), blue(col)/max(1, dis/shadingDis));
+        float shadingDis = 2*moveDelta.mag();
+        float shading = shadingDis/sqrt(dis);
+        col = color(red(col)*shading, green(col)*shading, blue(col)*shading);
         fill(col);
         float w = float(width)/pixelCount;
         float x = i*w;
