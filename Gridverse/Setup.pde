@@ -25,10 +25,10 @@ void setupTorus() {
 
 
       if (i > nodes.length*2/3 && i < nodes.length*4/5 && j > nodes[i].length*2/3 && j < nodes[i].length) {
-        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 100));
+        new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 100));
       }
       if (i > nodes.length/3 && i < nodes.length/2 && j > nodes[i].length/2 && j < nodes[i].length*4/5) {
-        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 200));
+        new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 200));
       }
     }
   }
@@ -255,7 +255,7 @@ void setupBump() {
       float radius = 0.5;
       if (r < radius) {
         r /= radius;
-        z = exp(-1.0/(1-r*r))*nodes.length*displayDis*radius/2;
+        z = exp(-1.0/(1-r*r))*nodes.length*displayDis*radius/1.0;
       }
 
 
@@ -263,7 +263,7 @@ void setupBump() {
 
       if (i == 0 || i == nodes.length-1 || j == 0 || j == nodes[i].length - 1) {
         color col = color(200, 100, 100);
-        if (i/4 %2 == 0 ) {
+        if (i == 0 || i == nodes.length-1) {
           col = color(100, 200, 100);
         }
         Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), col);
@@ -271,7 +271,7 @@ void setupBump() {
     }
   }
 
-  generateEdgesFor3DEmbedding(displayDis*1.5-1);
+  generateEdgesFor3DEmbedding(displayDis*2-1);
 }
 
 void setupCylinder() {
