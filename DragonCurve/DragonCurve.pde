@@ -1,6 +1,6 @@
 
 void setup() {
-  size(900, 500);
+  size(18000, 10000);
 
   points = new PVector[]{new PVector(width/4, height*0.7), new PVector(width*3/4, height*0.7)};
 }

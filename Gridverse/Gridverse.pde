@@ -24,13 +24,13 @@ void setup() {
     
   //setupTorus();
   //setupKlein();
-  setupProjectivePlane();
+  //setupProjectivePlane();
   
   //setupCone();
   //setupSphere();
   //setupBump();
   
-  //setupTardis();
+  setupTardis();
 
   // random stuff for testing
   photon = new Photon(nodes[0][0], new PVector(0.1, 0.8), color(10, 100, 200));  // velocity should be around mag of 1, probably less
