@@ -343,7 +343,6 @@ void setupTardis() {
   nodes = new Node[200][100];
   // need two planes, split first half of rows to do this
 
-
   // nodes
   for (int i = 0; i < nodes.length/2; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
@@ -352,7 +351,7 @@ void setupTardis() {
   }
   for (int i = nodes.length/2; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node((i-nodes.length*3/4) * displayDis, (j) * displayDis, 100);
+      nodes[i][j] = new Node((i-nodes.length*3/4) * displayDis, 0, (j) * displayDis + 100);
     }
   }
 
