@@ -4,6 +4,8 @@ class Environment {
   boolean[][][] earth;
   boolean[][][] displayMask;
 
+  float[][][] trackingPheromone;
+
   ArrayList<Ant> ants;
 
   Environment(int size) {
@@ -11,6 +13,7 @@ class Environment {
 
     earth = new boolean[size][size][size];
     displayMask = new boolean[size][size][size];
+    trackingPheromone = new float[size*2+1][size*2+1][size*2+1]; // ants operate on a finer grid
 
     ants = new ArrayList<Ant>();
 
@@ -32,7 +35,8 @@ class Environment {
         }
 
         // maybe create an ant
-        if (random(1.0) > 0.9) {
+        if (random(1.0) > 0.99) {
+        //if (i == size/2 && j == size/2) {
           ants.add(new Ant(i, j, groundHeight));
         }
       }
@@ -49,6 +53,19 @@ class Environment {
   }
 
   void update() {
+
+    // update pheromones
+    // could it be more efficient to have the ants update cells when they walk on them?
+    for (int i = 0; i < env.size*2+1; i++) {
+      for (int j = 0; j < env.size*2+1; j++) {
+        for (int k = 0; k < env.size*2+1; k++) {
+          trackingPheromone[i][j][k] *= 0.98;
+        }
+      }
+    }
+
+
+    // update ants
     for (Ant ant : ants) {
       ant.update();
       ant.display();
@@ -56,11 +73,20 @@ class Environment {
   }
 
   void display() {
-    fill(100, 200, 100);
     for (int i = 0; i < env.size; i++) {
       for (int j = 0; j < env.size; j++) {
         for (int k = 0; k < env.size; k++) {
           if (earth[i][j][k] && displayMask[i][j][k]) {
+            // to show pheromone strength
+            // get average pheromone
+            float p = 0;
+            for (int dx = -1; dx < 2; dx++) {
+              for (int dy = -1; dy < 2; dy++) {
+                p += trackingPheromone[i*2+1+dx][j*2+1+dy][k*2+2];
+              }
+            }
+            p /= 9.0;
+            fill(50 + 50*p, 100 +100*p, 50 +50*p);
             pushMatrix();
             translate(i, j, k);
             box(1);
@@ -111,6 +137,14 @@ class Environment {
       for (IntVector delta : orthogonalDeltas) {
         updateVoxelDisplay(pos.add(delta));
       }
+    }
+  }
+
+  void addPheromone(IntVector pos, float amount) {
+    if (pos.x >= 0 && pos.y >= 0 && pos.z >= 0 &&
+      pos.x < size*2+1 && pos.y < size*2+1 && pos.z < size*2+1) {
+      float current = trackingPheromone[pos.x][pos.y][pos.z];
+      trackingPheromone[pos.x][pos.y][pos.z] += (1.0-current)*amount;
     }
   }
 }
