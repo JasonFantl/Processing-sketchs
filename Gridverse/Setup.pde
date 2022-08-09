@@ -10,7 +10,16 @@ void setupTorus() {
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+      //nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+
+      float u = float(i)/nodes.length*TWO_PI;
+      float v = float(j)/nodes[i].length*TWO_PI;
+      float a = 40;
+      float c = 60;
+      float x = (c + a*cos(v))*cos(u);
+      float y = (c + a*cos(v))*sin(u);
+      float z = a*sin(v);
+      nodes[i][j] = new Node(x, y, z);
     }
   }
   // then add edges
@@ -40,7 +49,16 @@ void setupMobiusStrip() {
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+      //nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+
+      float w = 100.0;
+      float R = 100.0;
+      float s = (float(j*2)/nodes[i].length-1)*w;
+      float t = float(i)/(nodes.length-1)*TWO_PI;
+      float x = (R + s *cos(t/2.0))*cos(t);
+      float y = (R + s *cos(t/2.0))*sin(t);
+      float z = s*sin(t/2);
+      nodes[i][j] = new Node(x, y, z);
     }
   }
   // then add edges
@@ -90,7 +108,17 @@ void setupKlein() {
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+      //nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+
+      float r = 4.0;
+      float t = float(i)/nodes.length*TWO_PI;
+      float v = float(j)/nodes[i].length*TWO_PI;
+      float x = (r + cos(t/2.0)*sin(v)-sin(t/2)*sin(2*v))*cos(t);
+      float y = (r + cos(t/2.0)*sin(v)-sin(t/2)*sin(2*v))*sin(t);
+      float z = sin(t/2)*sin(v)+cos(t/2)*sin(2*v);
+
+      float s = 10.0;
+      nodes[i][j] = new Node(x*s, y*s, z*s);
     }
   }
   // then add edges
@@ -141,7 +169,16 @@ void setupProjectivePlane() {
   // init nodes first
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
-      nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+      //nodes[i][j] = new Node((i-nodes.length/2) * displayDis, (j-nodes[i].length/2) * displayDis, 0);
+
+      float t = float(i)/nodes.length*TWO_PI;
+      float v = float(j)/nodes[i].length*TWO_PI;
+      float x = cos(t)*cos(v)*sin(v);
+      float y = sin(t)*cos(v)*sin(v);
+      float z = cos(t)*sin(t)*cos(v)*cos(v);
+
+      float s = 150.0;
+      nodes[i][j] = new Node(x*s, y*s, z*s);
     }
   }
   // then add edges
@@ -154,7 +191,7 @@ void setupProjectivePlane() {
         nodes[i][j].addEdge(PVector.fromAngle(0), nodes[i + 1][j], false);
       } 
       if (i == 0) {
-        nodes[i][j].addEdge(PVector.fromAngle( PI), nodes[nodes.length - 1][nodes[i].length - j - 1], true);
+        nodes[i][j].addEdge(PVector.fromAngle(PI), nodes[nodes.length - 1][nodes[i].length - j - 1], true);
       } 
       if (i == nodes.length-1) {
         nodes[i][j].addEdge(PVector.fromAngle(0), nodes[0][nodes[i].length - j - 1], true);
@@ -173,15 +210,15 @@ void setupProjectivePlane() {
         nodes[i][j].addEdge(PVector.fromAngle(PI / 2), nodes[nodes.length - i - 1][0], true);
       }
 
-      if (i > nodes.length*0.5 && i < nodes.length*0.8 && j > nodes[i].length*0.1 && j < nodes[i].length*0.2) {
-        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 200));
-      }
-      if (i > nodes.length*0.2 && i < nodes.length*0.25 && j > nodes[i].length*0.7 && j < nodes[i].length*0.8) {
-        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(20, 100, 20));
-      }
-      //if (j == 0 || j == nodes[j].length-1) {
-      //  Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(100, 100, 200));
-      //}
+      //      if (i > nodes.length*0.5 && i < nodes.length*0.8 && j > nodes[i].length*0.1 && j < nodes[i].length*0.2) {
+      //        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(200, 100, 200));
+      //      }
+      //      if (i > nodes.length*0.2 && i < nodes.length*0.25 && j > nodes[i].length*0.7 && j < nodes[i].length*0.8) {
+      //        Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(20, 100, 20));
+      //      }
+      //      //if (j == 0 || j == nodes[j].length-1) {
+      //      //  Mass newMass = new Mass(nodes[i][j], new PVector(0, 0), color(100, 100, 200));
+      //      //}
     }
   }
 }
@@ -243,9 +280,10 @@ void setupBump() {
 
   for (int i = 0; i < nodes.length; i++) {
     for (int j = 0; j < nodes[i].length; j++) {
+      float s = 1.5;
       // get x, y, z
-      float x = (i - nodes.length/2) * displayDis;
-      float y = (j - nodes[i].length/2) * displayDis;
+      float x = (i - nodes.length/2) * displayDis*s;
+      float y = (j - nodes[i].length/2) * displayDis*s;
 
       float x2 = (float(i)*2.0/nodes.length - 1.0);
       float y2 = (float(j)*2.0/nodes[i].length - 1.0);
@@ -254,8 +292,15 @@ void setupBump() {
 
       float radius = 0.5;
       if (r < radius) {
-        r /= radius;
-        z = exp(-1.0/(1-r*r))*nodes.length*displayDis*radius/1.0;
+        //if (r < radius/4) {
+        //  z = -10;
+        //} else {
+          r /= radius;
+          //z = exp(-1.0/(1-r*r))*nodes.length*displayDis*radius*3.0;
+          int p = 3;
+          z = (pow(1.0/(r*r+1.0), p) - pow(0.5, p));
+          z *= nodes.length*displayDis*radius;
+        //}
       }
 
 
@@ -271,7 +316,8 @@ void setupBump() {
     }
   }
 
-  generateEdgesFor3DEmbedding(displayDis*2-1);
+  generateEdgesFor3DEmbedding(0);
+
 }
 
 void setupCylinder() {
@@ -295,8 +341,19 @@ void setupCylinder() {
       }
     }
   }
-  // then add edges
-  generateEdgesFor3DEmbedding(displayDis+1);
+
+  for (int i = 0; i < nodes.length; i++) {
+    for (int j = 0; j < nodes[i].length; j++) {
+      nodes[i][j].addEdge(PVector.fromAngle(0), nodes[mod(i + 1, nodes.length)][j], false);
+      nodes[i][j].addEdge(PVector.fromAngle(PI), nodes[mod(i - 1, nodes.length)][j], false);
+      if (j < nodes[i].length - 1) {
+      nodes[i][j].addEdge(PVector.fromAngle(PI / 2), nodes[i][mod(j + 1, nodes[i].length)], false);
+      }
+      if (j > 0) {
+      nodes[i][j].addEdge(PVector.fromAngle(-PI / 2), nodes[i][mod(j - 1, nodes[i].length)], false);
+      }
+    }
+  }
 }
 
 
@@ -305,7 +362,7 @@ void setupSphere() {
 
   // generate points using fibinacchi point placing
 
-  float radius = displayDis*100;
+  float radius = displayDis*50;
 
   float phi = 2.39996322972865332; // the golden angle
   int samples = nodes.length * nodes.length;
@@ -334,7 +391,7 @@ void setupSphere() {
   }
 
   // then add edges
-  generateEdgesFor3DEmbedding(displayDis*5);
+  generateEdgesFor3DEmbedding(displayDis*3);
 }
 
 

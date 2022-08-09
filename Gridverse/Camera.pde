@@ -47,8 +47,7 @@ class Camera {
       float screenX = (float(i*2)/(pixelCount-1)-1)*screenRadius;
       float angle = atan2(screenX, screenDis);
 
-      // TODO
-      // need the offset of desired and curent to match in photons, cylander setup shows the issue
+
       PVector dir = moveDelta.copy().rotate(angle).normalize();
       Photon photon = new Photon(mass.position.node, dir, color(0, 0, 0));
       photon.position.orientation = mass.position.orientation;

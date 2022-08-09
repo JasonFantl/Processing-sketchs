@@ -1,6 +1,4 @@
 
-
-// might be a bit off, need to test plane and projection code
 void generateEdgesFor3DEmbedding(float radius) {
 
   PVector [][][] planes = new PVector[nodes.length][][];
@@ -9,7 +7,13 @@ void generateEdgesFor3DEmbedding(float radius) {
   for (int i = 0; i < nodes.length; i++) {
     planes[i] = new PVector[nodes[i].length][4];
     for (int j = 0; j < nodes[i].length; j++) {
-      ArrayList<Node> nearNodes = getNearbyNodes(nodes[i][j], radius);
+      ArrayList<Node> nearNodes = null;
+      if (radius == 0) {
+        nearNodes = getNearbyNodesFlat(i, j);
+      }
+      else {
+        nearNodes = getNearbyNodes(nodes[i][j], radius);
+      }
       planes[i][j] = bestFitPlane(nodes[i][j], nearNodes);
     }
   }
@@ -18,14 +22,22 @@ void generateEdgesFor3DEmbedding(float radius) {
     for (int j = 0; j < nodes[i].length; j++) {
       Node node = nodes[i][j];
       PVector[] plane = planes[i][j];
+      
+      ArrayList<Node> nearNodes = null;
+      if (radius == 0) {
+        nearNodes = getNearbyNodesFlat(i, j);
+      }
+      else {
+        nearNodes = getNearbyNodes(nodes[i][j], radius);
+      }
 
       for (int k = 0; k < nodes.length; k++) {
         for (int l = 0; l < nodes[k].length; l++) {
           Node otherNode = nodes[k][l];
           PVector[] otherPlane = planes[k][l];
 
-          boolean inRadius = PVector.dist(node.displayPos, otherNode.displayPos) < radius;
-          if (node != otherNode && inRadius) {
+          //boolean inRadius = PVector.dist(node.displayPos, otherNode.displayPos) < radius;
+          if (nearNodes.contains(otherNode)) {
 
             // generate edges by projecting onto the plane
             // https://math.stackexchange.com/questions/3763054/projecting-3d-points-onto-2d-coordinate-system-of-a-plane
@@ -45,7 +57,8 @@ void generateEdgesFor3DEmbedding(float radius) {
             // then determine if axis is flipped
             // match 2 of the basis vectors
             boolean flipped = plane[1].dot(otherPlane[1]) < 0;
-            node.addEdge(projVec.normalize(), otherNode, flipped);
+            node.addEdge(projVec.div(20), otherNode, flipped);
+                        //node.addEdge(projVec.normalize(), otherNode, flipped);
           }
         }
       }
@@ -63,6 +76,25 @@ ArrayList<Node> getNearbyNodes(Node node, float radius) {
         nearNodes.add(nodes[k][l]);
       }
     }
+  }
+
+  return nearNodes;
+}
+
+ArrayList<Node> getNearbyNodesFlat(int i, int j) {
+  ArrayList<Node> nearNodes = new ArrayList<Node>();
+
+  if (i > 0) {
+    nearNodes.add(nodes[i-1][j]);
+  }
+  if (i < nodes.length-1) {
+    nearNodes.add(nodes[i+1][j]);
+  }
+  if (j > 0) {
+    nearNodes.add(nodes[i][j-1]);
+  }
+  if (j < nodes[i].length-1) {
+    nearNodes.add(nodes[i][j+1]);
   }
 
   return nearNodes;
